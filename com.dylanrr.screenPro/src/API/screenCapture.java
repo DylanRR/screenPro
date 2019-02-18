@@ -51,39 +51,20 @@ public class screenCapture {
 	}
 	
 	/**
-	 * Method used for building jFrame/JPanel and displaying screen captures in rapid succession.
-	 * (For debugging and or building use corresponding BigDecimals outlined in the code to measure the time from frame to frame.)
+	 * Get method for <code>Dimension screenSize</code>
+	 * @return Dimension screenSize
 	 */
-	public static void mainCapture() {
-		JPanel panel = new JPanel(); 
-		JFrame frame = new JFrame("ScreenCap");
-		JLabel label = new JLabel();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		BigDecimal start, end, time;
-		final BigDecimal bg2 = new BigDecimal(1000000000);	//Consent for nanoTime() to Seconds
-		
-		for(;;) {
-			start = new BigDecimal(System.nanoTime()); //Time Grab for start of capture (Only used for console debugging or FPS counter
-			setScreenCap();	//Sets a new bufferedImage using setScreenCap() method
-			panel.remove(label);	//Removes past panels
-			label = new JLabel(new ImageIcon(screenCap));
-			panel.add(label);
-		    frame.add(panel);
-		    frame.pack();
-		    frame.setVisible(true);
-		    
-		    //The Following shall only be used for console debugging (Possible use in FPS)
-		    end = new BigDecimal(System.nanoTime()); //Time grab for end of capture
-		    time = end.subtract(start); 
-		    System.out.println(time.divide(bg2, 10, RoundingMode.CEILING));
-		}
-		
+	public static Dimension getScreenSize() {
+		return screenSize;
 	}
 	
-	public static void main(String[] args) {
-		screenCapProgramInitialization();
-		mainCapture();
-		
+	/**
+	 * Get method for <code>Rectangle captureRect</code>
+	 * @return Rectangle captureRect
+	 */
+	public static Rectangle getCaptureRect() {
+		return captureRect;
 	}
+	
+	
 }
