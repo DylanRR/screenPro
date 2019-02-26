@@ -38,7 +38,7 @@ public class mainWindow {
 		    //The Following shall only be used for console debugging (Possible use in FPS)
 		    end = new BigDecimal(System.nanoTime()); //Time grab for end of capture
 		    time = end.subtract(start); 
-		    System.out.println(time.divide(bg2, 10, RoundingMode.CEILING));
+		 //   System.out.println(time.divide(bg2, 10, RoundingMode.CEILING));
 		}
 		
 	}

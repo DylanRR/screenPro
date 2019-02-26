@@ -1,13 +1,16 @@
 package API;
 
 import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.List;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.ImageIcon;
@@ -20,6 +23,13 @@ public class screenCapture {
 	public static BufferedImage screenCap;
 	public static Dimension screenSize;
 	public static Rectangle captureRect;
+	public static ArrayList<Integer> colorMatch = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar1Look = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar2Look = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar3Look = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar1LookMarker = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar2LookMarker = new ArrayList<Integer>();
+	public static ArrayList<Integer> bar3LookMarker = new ArrayList<Integer>();
 	
 	/**
 	 * Used to grab screen size and set the capture area
@@ -27,8 +37,150 @@ public class screenCapture {
 	public static void screenCapProgramInitialization() {
 		screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		captureRect = new Rectangle(0,0, screenSize.width/2, screenSize.height/2);
+		setColorThreshold();
+		setLookThreshold();
 	}
 	
+	public static void setColorThreshold() {
+		int lowestR, highestR, lowestG, highestG, lowestB, highestB;
+		lowestR = 90; highestR = 115; lowestG = 160; highestG = 185; lowestB = 110; highestB = 235;
+		for(int x=lowestR; x <= highestR; x++)
+			for(int y=lowestG; y <= highestG; y++)
+				for(int z=lowestB; z <= highestB; z++) {
+					int match = new Color(x, y, z).getRGB();
+					colorMatch.add(match);
+				}
+	    
+	}
+	
+	public static void setLookThreshold() {
+		int bar1x1, bar1x2, bar1y1, bar1y2;
+		bar1x1 = 248; bar1y1 = 183; bar1x2 = 250; bar1y2 = 185;
+		for(int x=bar1x1; x <= bar1x2; x++)
+			for(int y=bar1y1; y <= bar1y2; y++) {
+				bar1Look.add(x);
+				bar1Look.add(y);
+			}
+		int bar2x1, bar2x2, bar2y1, bar2y2;
+		bar2x1 = 306; bar2y1 = 183; bar2x2 = 308; bar2y2 = 185;
+		for(int x=bar2x1; x <= bar2x2; x++)
+			for(int y=bar2y1; y <= bar2y2; y++) {
+				bar2Look.add(x);
+				bar2Look.add(y);
+			}
+		int bar3x1, bar3x2, bar3y1, bar3y2;
+		bar3x1 = 362; bar3y1 = 183; bar3x2 = 364; bar3y2 = 185;
+		for(int x=bar3x1; x <= bar3x2; x++)
+			for(int y=bar3y1; y <= bar3y2; y++) {
+				bar3Look.add(x);
+				bar3Look.add(y);
+			}
+	}
+	
+	public static void setLookThresholdMarker() {
+		int bar1x1, bar1x2, bar1y1, bar1y2;
+		bar1x1 = 248; bar1y1 = 183; bar1x2 = 258; bar1y2 = 193;
+		for(int x=bar1x1; x <= bar1x2; x++)
+			for(int y=bar1y1; y <= bar1y2; y++) {
+				bar1LookMarker.add(x);
+				bar1LookMarker.add(y);
+			}
+		int bar2x1, bar2x2, bar2y1, bar2y2;
+		bar2x1 = 306; bar2y1 = 183; bar2x2 = 316; bar2y2 = 193;
+		for(int x=bar2x1; x <= bar2x2; x++)
+			for(int y=bar2y1; y <= bar2y2; y++) {
+				bar2LookMarker.add(x);
+				bar2LookMarker.add(y);
+			}
+		int bar3x1, bar3x2, bar3y1, bar3y2;
+		bar3x1 = 362; bar3y1 = 183; bar3x2 = 372; bar3y2 = 193;
+		for(int x=bar3x1; x <= bar3x2; x++)
+			for(int y=bar3y1; y <= bar3y2; y++) {
+				bar3LookMarker.add(x);
+				bar3LookMarker.add(y);
+			}
+	}
+	
+	public static int getCompareBar1() {
+		int count = 0;
+		for(int a=0, b=1; b<bar1Look.size(); a=a+2, b=b+2) {
+			int x = bar1Look.get(a), y=bar1Look.get(b);
+			for(int c=0; c<colorMatch.size(); c++) {
+				final int grab = screenCap.getRGB(x, y);
+				if(grab == colorMatch.get(c))
+					count++;
+			}
+		}
+		return count;
+	}
+	
+	public static int getCompareBar2() {
+		int count = 0;
+		for(int a=0, b=1; b<bar2Look.size(); a=a+2, b=b+2) {
+			int x = bar2Look.get(a), y=bar2Look.get(b);
+			for(int c=0; c<colorMatch.size(); c++) {
+				final int grab = screenCap.getRGB(x, y);
+				if(grab == colorMatch.get(c))
+					count++;
+			}
+		}
+		return count;
+	}
+	
+	public static int getCompareBar3() {
+		int count = 0;
+		for(int a=0, b=1; b<bar3Look.size(); a=a+2, b=b+2) {
+			int x = bar3Look.get(a), y=bar3Look.get(b);
+			for(int c=0; c<colorMatch.size(); c++) {
+				final int grab = screenCap.getRGB(x, y);
+				if(grab == colorMatch.get(c))
+					count++;
+			}
+		}
+		return count;
+	}
+	
+	public static int compareBars() {
+		int bar1 = getCompareBar1();
+		int bar2 = getCompareBar2();
+		int bar3 = getCompareBar3();
+		if(bar1 > bar2 && bar1 > bar3)
+			return 1;
+		else if(bar2 > bar1 && bar2 > bar3)
+			return 2;
+		else if(bar3 > bar1 && bar3 > bar2)
+			return 3;
+		else
+			return 0;
+	}
+	
+	public static void marker() {
+		int compareBars = compareBars();
+		int R=244; int G=238; int B=66;
+		int rgb = 65536 * R + 256 * G + B;
+		if (compareBars == 1) {
+			for(int a=0, b=1; b<bar1LookMarker.size(); a=a+2, b=b+2) {
+				int x = bar1LookMarker.get(a), y=bar1LookMarker.get(b);
+				screenCap.setRGB(x, y, rgb);
+				System.out.println("bar 1");
+			}
+		}
+		else if (compareBars == 2) {
+			for(int a=0, b=1; b<bar2LookMarker.size(); a=a+2, b=b+2) {
+				int x = bar2LookMarker.get(a), y=bar2LookMarker.get(b);
+				screenCap.setRGB(x, y, rgb);
+				System.out.println("bar 2");
+			}
+
+		}
+		else if (compareBars == 3) {
+			for(int a=0, b=1; b<bar3LookMarker.size(); a=a+2, b=b+2) {
+				int x = bar3LookMarker.get(a), y=bar3LookMarker.get(b);
+				screenCap.setRGB(x, y, rgb);
+				System.out.println("bar 3");
+			}
+		}
+	}
 	/**
 	 * Sets a screen capture of the pre-defined area utilizing Robot() and stores the image in <code>public static BufferedImage screenCap</code>
 	 */
@@ -36,6 +188,7 @@ public class screenCapture {
 		try {
 			Robot robot = new Robot();
 			screenCap = robot.createScreenCapture(captureRect);
+			marker();
 		}
 		catch (AWTException ex) {
             System.err.println(ex);
